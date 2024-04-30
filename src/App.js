@@ -1,24 +1,32 @@
 import logo from './logo.svg';
 import './App.css';
+import React, { useState, useEffect } from 'react';
+import List from './components/List';
 
 function App() {
+  const [animals, setAnimals] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/animals")
+    .then(response => response.json())
+    .then(data => setAnimals(data))
+    .catch(error => console.error('Error fetching data:', error));
+}, []);
+
+const increasePoints = (id) => {
+  setAnimals(animals.map(animal => {
+    if (animal.id === id) {
+      return { ...animal, points: animal.points + 1 };
+    }
+    return animal;
+  }));
+};
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <div>
+      <h1>Animal Points Tracker</h1>
+      <List animals={animals} onIncreasePoints={increasePoints} />
+
+   </div>
   );
 }
 
